@@ -6,6 +6,7 @@ import GuessInput from "../GuessInput";
 import UserGuess from "../UserGuess";
 import {NUM_OF_GUESSES_ALLOWED} from "../../constants";
 import {range} from "../../utils";
+import GameOver from "../GameOver";
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -24,6 +25,7 @@ const guessesObj = [
 function Game() {
     const [guesses, setGuesses] = useState(guessesObj);
     const [currentRound, setCurrentRound] = useState(0);
+    const [gameOver, setGameOver] = useState('lost')
 
     function addGuess(text) {
         setGuesses(prevGuesses => {
@@ -35,9 +37,9 @@ function Game() {
         })
     }
 
-    const guessesList = guesses.map(guess => (
-        <UserGuess key={guess.id} guess={guess.title}/>
-    ))
+    function handleGameOver() {
+        setGameOver('win')
+    }
 
 
     return (
@@ -45,17 +47,14 @@ function Game() {
             <div className="guess-results">
                 {range(0, NUM_OF_GUESSES_ALLOWED).map((row, rowIndex) => {
                     return <p key={guesses[rowIndex].id} className={'guess'}>
-                        {range(0, 5).map((column, columnIndex) => {
-                                return <span key={guesses[rowIndex].id+columnIndex} className={'cell'}>{guesses[rowIndex].title[columnIndex]}</span>
-                            })
-                        }
+                        <UserGuess handleGameOver={handleGameOver} guess={guesses[rowIndex]} answer={answer}/>
                     </p>
                 })}
             </div>
             <div className="guess-results">
-                {/*{guessesList}*/}
             </div>
             <GuessInput addGuess={addGuess} />
+            <GameOver type={gameOver} answer={answer}/>
         </div>
     );
 }

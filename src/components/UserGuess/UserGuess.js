@@ -12,16 +12,8 @@ function UserGuess({guess, answer, handleGameOver}) {
     }
 
     if (guess.title) {
-        const checkCorrect = checkGuess(guess.title, answer)
-        let userWon = true;
-        for (let key in checkCorrect) {
-            if (checkCorrect[key].status !== 'correct') {
-                userWon = false;
-                break;
-            }
-        }
         useEffect(() => {
-            if (userWon) {
+            if (guess.title === answer) {
                 handleGameOver()
             }
 

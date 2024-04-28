@@ -1,25 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {range} from "../../utils";
 import {checkGuess} from "../../game-helpers";
 
 function UserGuess({guess, answer, handleGameOver}) {
     function compareIndexes(index) {
         if (guess.title) {
-            let userWon = true;
             const resultOfCheck = checkGuess(guess.title, answer)
-            for (let status in resultOfCheck){
-                console.log(resultOfCheck[status])
-                if (resultOfCheck[status] !== 'correct') {
-                    userWon = false
-                }
-            }
-            if (userWon) {
-                console.log(userWon)
-                handleGameOver()
-            }
             return `${resultOfCheck[index].status} cell`
         }
         return `cell`
+    }
+
+    if (guess.title) {
+        const checkCorrect = checkGuess(guess.title, answer)
+        let userWon = true;
+        for (let key in checkCorrect) {
+            if (checkCorrect[key].status !== 'correct') {
+                userWon = false;
+                break;
+            }
+        }
+        useEffect(() => {
+            if (userWon) {
+                handleGameOver()
+            }
+
+        }, [])
     }
 
     return <>

@@ -6,7 +6,7 @@ function GameOver({type, attempts, answer}) {
             type === 'win' &&
             <p>
                 <strong>Congratulations!</strong> Got it in
-                <strong>{attempts} guesses</strong>.
+                <strong> {attempts} guesses</strong>.
             </p>
         }
         {

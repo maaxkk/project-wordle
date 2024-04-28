@@ -9,7 +9,7 @@ import {range} from "../../utils";
 import GameOver from "../GameOver";
 
 // Pick a random word on every pageload.
-const answer = sample(WORDS);
+let answer = sample(WORDS);
 // To make debugging easier, we'll log the solution in the console.
 console.info({answer});
 
@@ -25,22 +25,38 @@ const guessesObj = [
 function Game() {
     const [guesses, setGuesses] = useState(guessesObj);
     const [currentRound, setCurrentRound] = useState(0);
-    const [gameOver, setGameOver] = useState('lost')
+    const [gameOver, setGameOver] = useState('')
 
     function addGuess(text) {
         setGuesses(prevGuesses => {
             const newGuess = {title: text, id: Math.random()}
             const newGuesses = [...prevGuesses]
             newGuesses[currentRound] = newGuess;
-            setCurrentRound(prevRound => prevRound + 1)
+            setCurrentRound(prevRound => {
+                if (prevRound + 1 === 6) {
+                    setGameOver('lost')
+                }
+                return prevRound + 1
+            })
             return newGuesses;
         })
+    }
+
+    function restartGame() {
+        setCurrentRound(0);
+        setGameOver('');
+        setGuesses(prevGuesses => {
+            const nextGuesses = [...prevGuesses]
+            nextGuesses.forEach(guess => guess.title = '')
+            return nextGuesses;
+        })
+        answer = sample(WORDS)
+        console.info({answer})
     }
 
     function handleGameOver() {
         setGameOver('win')
     }
-
 
     return (
         <div className="game-wrapper">
@@ -53,8 +69,9 @@ function Game() {
             </div>
             <div className="guess-results">
             </div>
-            <GuessInput addGuess={addGuess} />
-            <GameOver type={gameOver} answer={answer}/>
+            {gameOver === '' ? <GuessInput addGuess={addGuess} /> :
+               <button onClick={restartGame} className={'restart'}>Restart game!</button>}
+            {gameOver !== '' && <GameOver type={gameOver} attempts={currentRound} answer={answer}/>}
         </div>
     );
 }
